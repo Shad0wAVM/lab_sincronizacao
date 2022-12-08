@@ -6,7 +6,7 @@
 
 CC = gcc
 CFLAGS = -g -Wall -std=c17
-#CFLAGS += -fsanitize=thread
+CFLAGS += -fsanitize=thread
 
 # enable all POSIX APIs (required in some systems)
 CFLAGS += -D_POSIX_C_SOURCE=200809L
