@@ -10,6 +10,7 @@
 #define ALICE_DEPOSIT_AMMOUNT ((ssize_t)1)
 #define BOB_WITHDRAW_AMMOUNT ((ssize_t)1)
 
+pthread_mutex_t trinco = PTHREAD_MUTEX_INITIALIZER;
 typedef struct {
     ssize_t balance;
     ssize_t n_operations;
@@ -55,7 +56,9 @@ void *alice_thread_fn(void *arg) {
 
     size_t total_deposited = 0;
     for (size_t i = 0; i < args->n_deposits; i++) {
+        pthread_mutex_lock(&trinco);
         account_deposit(args->account, ALICE_DEPOSIT_AMMOUNT);
+        pthread_mutex_unlock(&trinco);
         total_deposited += ALICE_DEPOSIT_AMMOUNT;
     }
 
@@ -69,7 +72,9 @@ void *bob_thread_fn(void *arg) {
     size_t total_withdrawn = 0;
     size_t failed_withdrawals = 0;
     for (size_t i = 0; i < args->n_withdrawals; i++) {
+        pthread_mutex_lock(&trinco); 
         ssize_t ret = account_withdraw(args->account, BOB_WITHDRAW_AMMOUNT);
+        pthread_mutex_unlock(&trinco); 
         if (ret != -1) {
             total_withdrawn += ret;
         } else {
